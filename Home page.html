@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unveil India - Extraordinary Journeys Await</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            overflow-x: hidden;
+        }
+        
+        .video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .video-container:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+        }
+        
+        .video-container video {
+            min-width: 100%;
+            min-height: 100%;
+            object-fit: cover;
+            position: absolute;
+        }
+        
+        header {
+            position: fixed;
+            width: 100%;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000; /* High z-index for header */
+            transition: 0.5s;
+            background: rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        header.sticky {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px 40px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        header .logo {
+            color: #fff;
+            font-size: 24px;
+            text-transform: uppercase;
+            text-decoration: none;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+        
+        header.sticky .logo {
+            color: #111;
+        }
+        
+        header ul {
+            position: relative;
+            display: flex;
+        }
+        
+        header ul li {
+            position: relative;
+            list-style: none;
+            margin-left: 30px;
+        }
+        
+        header ul li a {
+            position: relative;
+            display: inline-block;
+            margin: 0 10px;
+            color: #fff;
+            text-decoration: none;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        
+        header.sticky ul li a {
+            color: #111;
+        }
+        
+        header ul li a:hover {
+            color: #ff6b6b;
+        }
+        
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .auth-buttons span {
+            padding: 8px 20px;
+            background: transparent;
+            color: #fff;
+            border: 2px solid #fff;
+            border-radius: 30px;
+            font-weight: 500;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        
+        header.sticky .auth-buttons span {
+            color: #111;
+            border-color: #111;
+        }
+        
+        .auth-buttons span:hover {
+            background: #ff6b6b;
+            color: #fff;
+            border-color: #ff6b6b;
+        }
+        
+        .profile-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #ff6b6b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 0 20px;
+        }
+        
+        .content h1 {
+            font-size: 4em;
+            color: #fff;
+            margin-bottom: 20px;
+            text-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+            animation: fadeInUp 1s ease-out;
+        }
+        
+        .content p {
+            font-size: 1.2em;
+            color: #fff;
+            max-width: 700px;
+            margin-bottom: 30px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 1s ease-out 0.3s;
+            animation-fill-mode: both;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: #ff6b6b;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            transition: 0.3s;
+            animation: fadeInUp 1s ease-out 0.6s;
+            animation-fill-mode: both;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            background: #ff4f4f;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.6);
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Modal styles */
+        .login-indicator {
+            display: none;
+            position: fixed;
+            z-index: 2000; /* Higher z-index to be on top of chatbot */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            animation: fadeIn 0.3s;
+        }
+        
+        .indicator-content {
+            background-color: #fff;
+            margin: 15% auto;
+            width: 400px;
+            border-radius: 10px;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+            animation: slideDown 0.4s;
+            overflow: hidden;
+            text-align: center;
+            padding: 40px 20px;
+            position: relative; /* Needed for absolute positioning of close button */
+        }
+        
+        .close-indicator {
+            position: absolute;
+            right: 20px;
+            top: 10px;
+            color: #555;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        .indicator-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .indicator-btn {
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+        }
+        
+        .login-btn {
+            background: #ff6b6b;
+            color: white;
+        }
+        
+        .register-btn {
+            background: transparent;
+            color: #333;
+            border: 2px solid #ff6b6b;
+        }
+        
+        .login-btn:hover {
+            background: #ff4f4f;
+        }
+        
+        .register-btn:hover {
+            background: #ffefef;
+        }
+        
+        @keyframes fadeIn {
+            from {opacity: 0}
+            to {opacity: 1}
+        }
+        
+        @keyframes slideDown {
+            from {transform: translateY(-50px); opacity: 0;}
+            to {transform: translateY(0); opacity: 1;}
+        }
+
+        /* Destinations previews */
+        .destinations {
+            padding: 100px 50px;
+            background: white;
+            text-align: center;
+        }
+        
+        .destinations h2 {
+            font-size: 2.5em;
+            margin-bottom: 50px;
+            color: #333;
+        }
+        
+        .destinations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .destination-card {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: 0.3s;
+        }
+        
+        .destination-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .destination-img {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .destination-info {
+            padding: 20px;
+            background: white;
+        }
+        
+        .destination-info h3 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .destination-info p {
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .explore-btn {
+            display: inline-block;
+            padding: 8px 20px;
+            background: #ff6b6b;
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            font-size: 14px;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        
+        .explore-btn:hover {
+            background: #ff4f4f;
+            transform: translateY(-3px);
+        }
+        
+        /* Recreation section */
+        .recreation {
+            padding: 100px 50px;
+            background: #f9f9f9;
+            text-align: center;
+        }
+        
+        .recreation h2 {
+            font-size: 2.5em;
+            margin-bottom: 50px;
+            color: #333;
+        }
+
+        /* Chatbot Styles - Adjusted Z-index */
+        .chat-icon {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s;
+            z-index: 1000; /* Ensure chat icon is high enough */
+            border: 3px solid #FF6B6B;
+            animation: pulse 2s infinite;
+            padding: 3px;
+            overflow: hidden;
+        }
+
+        .chat-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 107, 107, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0); }
+        }
+
+        .chat-icon:hover {
+            transform: scale(1.1) rotate(10deg);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            animation: none;
+        }
+
+        .chatbot {
+            position: fixed;
+            bottom: 110px;
+            right: 30px;
+            width: 300px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            display: none;
+            flex-direction: column;
+            z-index: 1000; /* Ensure chatbot is above regular content and header */
+            transition: all 0.3s ease-in-out;
+            border: 1px solid #e0e0e0;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .chatbot-header {
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF3A3A 100%);
+            color: white;
+            padding: 12px 15px;
+            font-weight: bold;
+            font-size: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chatbot-header .close-btn {
+            cursor: pointer;
+            font-size: 22px;
+            transition: transform 0.3s;
+            background: rgba(255, 255, 255, 0.2);
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .chatbot-header .close-btn:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .chatbot-body {
+            padding: 15px;
+            height: 280px;
+            overflow-y: auto;
+            font-size: 13px;
+            background: #f5f5f5;
+            scrollbar-width: thin;
+            scrollbar-color: #FF6B6B #f1f1f1;
+        }
+
+        .chatbot-message {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message-bubble {
+            padding: 10px 12px;
+            border-radius: 15px;
+            max-width: 85%;
+            word-break: break-word;
+            line-height: 1.4;
+            position: relative;
+            animation: bounceIn 0.3s ease forwards;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .bot-message .message-bubble {
+            background: #fff;
+            border-left: 3px solid #FF6B6B;
+            align-self: flex-start;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .user-message .message-bubble {
+            background: #FF6B6B;
+            color: white;
+            align-self: flex-end;
+            margin-left: auto;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .message-time {
+            font-size: 10px;
+            color: #999;
+            margin-top: 4px;
+            margin-left: 5px;
+        }
+
+        .quick-replies {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 8px 12px;
+            background: #f9f9f9;
+            border-top: 1px solid #eee;
+        }
+
+        .quick-reply {
+            background: white;
+            border: 1px solid #FF6B6B;
+            color: #FF6B6B;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .quick-reply:hover {
+            background: #FF6B6B;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .chatbot-footer {
+            display: flex;
+            padding: 12px;
+            border-top: 1px solid #eee;
+            background: white;
+            align-items: center;
+        }
+
+        .chatbot-footer input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 13px;
+            background-color: white;
+            color: #333;
+        }
+
+        .chatbot-footer input:focus {
+            outline: none;
+            border-color: #FF6B6B;
+            box-shadow: 0 0 5px rgba(255, 107, 107, 0.2);
+        }
+
+        .chatbot-footer button {
+            padding: 10px 15px;
+            margin-left: 8px;
+            font-size: 13px;
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF3A3A 100%);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .chatbot-footer button:hover {
+            background: linear-gradient(135deg, #FF3A3A 0%, #FF2020 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(255, 107, 107, 0.3);
+        }
+
+        /* For responsive design - UPDATED */
+        @media (max-width: 500px) {
+            .chatbot {
+                width: 85%;
+                right: 20px;
+                left: auto;
+                bottom: 90px;
+            }
+            
+            .chat-icon {
+                bottom: 20px;
+                right: 20px;
+                width: 60px;
+                height: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="video-container">
+        <video autoplay muted loop>
+            <source src="images/home.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <header>
+        <span class="logo">Unveil India</span>
+        <ul>
+            <li><a href="Home page.html">Home</a></li>
+            <li><a href="budget page.html">Destinations</a></li>
+            <li><a href="sub destination.html">Recreational site</a></li>
+            <li><a id="maps-link">Maps</a></li>
+        </ul>
+        <div class="auth-buttons">
+            <span id="loginBtn">Login</span>
+            <span id="registerBtn">Register</span>
+            <div class="profile-icon" style="display:none;">U</div>
+        </div>
+    </header>
+
+    <section class="content" id="home">
+        <h1>Unveil the Magic of India</h1>
+        <p>From ancient temples to magnificent mountains, vibrant cities to serene beaches, India offers endless journeys of discovery. Let us guide you through this land of wonders.</p>
+        <span class="btn" id="main-explore-btn">Explore Destinations</span>
+    </section>
+
+    <section class="destinations" id="destinations">
+        <h2>Popular Destinations</h2>
+        <div class="destinations-grid">
+            <div class="destination-card">
+                <div class="destination-img" style="background-image: url('tajmahal.avif');"></div>
+                <div class="destination-info">
+                    <h3>Taj Mahal, Agra</h3>
+                    <p>Marvel at this iconic monument of love, an architectural wonder that will take your breath away.</p>
+                    <span class="explore-btn">Explore</span>
+                </div>
+            </div>
+            
+            <div class="destination-card">
+                <div class="destination-img" style="background-image: url('varanasi.jpeg');"></div>
+                <div class="destination-info">
+                    <h3>Varanasi</h3>
+                    <p>Experience the spiritual heart of India on the banks of the sacred Ganges river.</p>
+                    <span class="explore-btn">Explore</span>
+                </div>
+            </div>
+            
+            <div class="destination-card">
+                <div class="destination-img" style="background-image: url('Kerala Backwaters.jpeg');"></div>
+                <div class="destination-info">
+                    <h3>Kerala Backwaters</h3>
+                    <p>Float along serene waterways surrounded by lush greenery and traditional villages.</p>
+                    <span class="explore-btn">Explore</span>
+                </div>
+            </div>
+            
+            <div class="destination-card">
+                <div class="destination-img" style="background-image: url('jaipur.jpeg');"></div>
+                <div class="destination-info">
+                    <h3>Jaipur, Rajasthan</h3>
+                    <p>Explore the Pink City with its magnificent palaces, forts, and vibrant bazaars.</p>
+                    <span class="explore-btn">Explore</span>
+                </div>
+            </div>
+            
+            <div class="destination-card">
+                <div class="destination-img" style="background-image: url('Darjeeling.jpeg');"></div>
+                <div class="destination-info">
+                    <h3>Darjeeling</h3>
+                    <p>Experience the breathtaking views of the Himalayas and world-famous tea plantations.</p>
+                    <span class="explore-btn">Explore</span>
+                </div>
+            </div>
+            
+            <div class="destination-card">
+                <div class="destination-img" style="background-image: url('Goa Beaches.avif');"></div>
+                <div class="destination-info">
+                    <h3>Goa Beaches</h3>
+                    <p>Relax on golden sands, enjoy water sports, and experience the unique Indo-Portuguese culture.</p>
+                    <span class="explore-btn">Explore</span>
+                </div>
+            </div>
+                        
+            <div class="destination-card">
+                <div class="destination-img" style="background-image: url('Ladakh.jpg');"></div>
+                <div class="destination-info">
+                    <h3>Ladakh</h3>
+                    <p>Discover the high-altitude desert with stunning landscapes, Buddhist monasteries, and adventure trails.</p>
+                    <span class="explore-btn">Explore</span>
+                </div>
+            </div>
+            
+            <div class="destination-card">
+                <div class="destination-img" style="background-image: url('Hampi.jpg');"></div>
+                <div class="destination-info">
+                    <h3>Hampi</h3>
+                    <p>Wander through the ruins of the ancient Vijayanagara Empire, a UNESCO World Heritage Site.</p>
+                    <span class="explore-btn">Explore</span>
+                </div>
+            </div>
+            
+            <div class="destination-card">
+                <div class="destination-img" style="background-image: url('Mysore Palace.jpg');"></div>
+                <div class="destination-info">
+                    <h3>Mysore Palace</h3>
+                    <p>Visit the magnificent palace with its Indo-Saracenic architecture and opulent interiors.</p>
+                    <span class="explore-btn">Explore</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <div class="chat-icon" onclick="toggleChatbot()" id="chat-icon">
+        <img src="chatbot.jpg" alt="Chat with us" id="chat-icon-img">
+    </div>
+
+    <div class="chatbot" id="chatbot">
+        <div class="chatbot-header">
+            <span>India Travel Guide</span>
+            <span class="close-btn" onclick="toggleChatbot()">×</span>
+        </div>
+        <div class="chatbot-body" id="chatbot-body">
+            <div class="chatbot-message bot-message">
+                <div class="message-bubble">
+                    Namaste! 🙏 I'm your India travel guide. Ask me about:
+                    <ul style="margin-top: 8px; padding-left: 18px;">
+                        <li>Places to visit</li>
+                        <li>Travel tips</li>
+                        <li>Local cuisine</li>
+                        <li>Transportation</li>
+                    </ul>
+                </div>
+                <div class="message-time">Just now</div>
+            </div>
+        </div>
+        <div class="quick-replies" id="quick-replies">
+            <div class="quick-reply" onclick="sendQuickReply('Best places to visit')">Best places</div>
+            <div class="quick-reply" onclick="sendQuickReply('Transportation in India')">Transport</div>
+            <div class="quick-reply" onclick="sendQuickReply('Shopping tips in India')">Shopping</div>
+            <div class="quick-reply" onclick="sendQuickReply('Cultural etiquette in India')">Etiquette</div>
+        </div>
+        <div class="chatbot-footer">
+            <input type="text" id="chatbot-input" placeholder="Ask about India..." onkeypress="if(event.key === 'Enter') sendMessage()">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <div id="loginIndicator" class="login-indicator">
+        <div class="indicator-content">
+            <span class="close-indicator">&times;</span>
+            <h2>Login Required</h2>
+            <p>Please log in or register to access this feature.</p>
+            <div class="indicator-buttons">
+                <a href="login page.html" class="indicator-btn login-btn">Login</a>
+                <a href="register.html" class="indicator-btn register-btn">Register</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Header scroll effect
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            header.classList.toggle('sticky', window.scrollY > 0);
+        });
+        
+        // Login/Register buttons functionality
+        const loginBtn = document.getElementById('loginBtn');
+        const registerBtn = document.getElementById('registerBtn');
+        const loginIndicator = document.getElementById('loginIndicator');
+        const closeIndicator = document.querySelector('.close-indicator');
+        const mapsLink = document.getElementById('maps-link');
+        const allExploreButtons = document.querySelectorAll('.explore-btn');
+        const mainExploreBtn = document.getElementById('main-explore-btn');
+        
+        // Login button redirects to login page
+        loginBtn.addEventListener('click', function() {
+            window.location.href = 'login page.html';
+        });
+        
+        // Register button redirects to register page
+        registerBtn.addEventListener('click', function() {
+            window.location.href = 'register.html';
+        });
+        
+        // Maps link shows login indicator
+        mapsLink.addEventListener('click', function() {
+            loginIndicator.style.display = 'block';
+        });
+        
+        // All explore buttons show login indicator
+        allExploreButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                loginIndicator.style.display = 'block';
+            });
+        });
+        
+        // Main explore button shows login indicator
+        mainExploreBtn.addEventListener('click', function() {
+            loginIndicator.style.display = 'block';
+        });
+        
+        // Close login indicator
+        closeIndicator.addEventListener('click', function() {
+            loginIndicator.style.display = 'none';
+        });
+        
+        window.addEventListener('click', function(event) {
+            if (event.target == loginIndicator) {
+                loginIndicator.style.display = 'none';
+            }
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('header ul li a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                if (this.getAttribute('href').startsWith('#')) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#maps') return; // Skip for maps link
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop,
+                            behavior: 'smooth'
+                        });
+                    }
+                }
+            });
+        });
+
+        // Chatbot functionality
+        let chatbotOpen = false;
+
+        function toggleChatbot() {
+            const chatbot = document.getElementById("chatbot");
+            chatbotOpen = !chatbotOpen;
+            
+            if (chatbotOpen) {
+                chatbot.style.display = "flex";
+                setTimeout(() => {
+                    chatbot.style.opacity = "1";
+                    chatbot.style.transform = "translateY(0)";
+                }, 50);
+            } else {
+                chatbot.style.opacity = "0";
+                chatbot.style.transform = "translateY(20px)";
+                setTimeout(() => {
+                    chatbot.style.display = "none";
+                }, 300);
+            }
+        }
+
+        function sendMessage() {
+            const input = document.getElementById("chatbot-input");
+            const message = input.value.trim();
+            
+            if (message) {
+                addMessage("user", message);
+                input.value = "";
+                
+                // Process the message and generate a response
+                setTimeout(() => {
+                    const botResponse = generateResponse(message);
+                    addMessage("bot", botResponse);
+                }, 500);
+            }
+        }
+
+        function sendQuickReply(message) {
+            addMessage("user", message);
+            
+            // Process the quick reply and generate a response
+            setTimeout(() => {
+                const botResponse = generateResponse(message);
+                addMessage("bot", botResponse);
+            }, 500);
+        }
+
+        function addMessage(type, message) {
+            const chatBody = document.getElementById("chatbot-body");
+            const messageDiv = document.createElement("div");
+            messageDiv.className = `chatbot-message ${type}-message`;
+            
+            const messageBubble = document.createElement("div");
+            messageBubble.className = "message-bubble";
+            messageBubble.innerHTML = message;
+            
+            const messageTime = document.createElement("div");
+            messageTime.className = "message-time";
+            messageTime.textContent = "Just now";
+            
+            messageDiv.appendChild(messageBubble);
+            messageDiv.appendChild(messageTime);
+            chatBody.appendChild(messageDiv);
+            
+            // Scroll to the bottom of the chat
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        function generateResponse(message) {
+            message = message.toLowerCase();
+            
+            // Responses for common questions
+            if (message.includes("best places") || message.includes("where to visit") || message.includes("top destination")) {
+                return "India has so many incredible places to visit! Here are some must-see destinations:<br><br>🏰 <b>Golden Triangle</b>: Delhi, Agra (Taj Mahal), Jaipur<br>🏝️ <b>Beaches</b>: Goa, Kerala, Andaman Islands<br>🏔️ <b>Mountains</b>: Ladakh, Himachal Pradesh, Sikkim<br>🛕 <b>Spiritual</b>: Varanasi, Rishikesh, Amritsar<br><br>Want more specific recommendations?";
+            }
+            
+            else if (message.includes("transport") || message.includes("travel") || message.includes("getting around")) {
+                return "India offers various transportation options:<br><br>✈️ <b>Flights</b>: Best for long distances<br>🚆 <b>Trains</b>: Extensive network, affordable & scenic<br>🚌 <b>Buses</b>: Good for shorter routes<br>🚕 <b>Taxis/Uber/Ola</b>: Convenient in cities<br>🛺 <b>Auto-rickshaws</b>: Fun for short city trips<br><br>Trains are my personal recommendation for experiencing India!";
+            }
+            
+            else if (message.includes("food") || message.includes("cuisine") || message.includes("eat")) {
+                return "Indian cuisine is wonderfully diverse! Each region has unique specialties:<br><br>🍛 <b>North</b>: Butter chicken, kebabs, chole bhature<br>🥘 <b>South</b>: Dosa, idli, biryani<br>🦐 <b>West</b>: Dhokla, pav bhaji, seafood<br>🍚 <b>East</b>: Momos, rasgulla, fish curry<br><br>Always try local specialties and street food (from hygienic vendors)!";
+            }
+            
+            else if (message.includes("shopping") || message.includes("buy") || message.includes("souvenirs")) {
+                return "India is a shopper's paradise! Look for:<br><br>👗 <b>Textiles</b>: Silk, cotton, pashmina shawls<br>💍 <b>Jewelry</b>: Silver, gold, gemstones<br>🏺 <b>Handicrafts</b>: Pottery, paintings, woodwork<br>🧵 <b>Clothing</b>: Saris, kurtas, embroidered items<br>🧪 <b>Spices</b>: Tea, saffron, spice blends<br><br>Remember to practice your haggling skills at local markets!";
+            }
+            
+            else if (message.includes("weather") || message.includes("when to visit") || message.includes("best time")) {
+                return "The best time to visit India depends on the region:<br><br>🍂 <b>October to March</b>: Ideal for most of India<br>❄️ <b>Summer (April-June)</b>: Good for Himalayas<br>☔ <b>Monsoon (July-September)</b>: Lush scenery but travel can be difficult<br><br>Winter is generally the best time for most tourist destinations!";
+            }
+            
+            else if (message.includes("etiquette") || message.includes("customs") || message.includes("culture")) {
+                return "Some important cultural tips for India:<br><br>🙏 Greet with 'Namaste' with palms together<br>👞 Remove shoes before entering homes/temples<br>🤝 Use right hand for giving/receiving items<br>👗 Dress modestly, especially at religious sites<br>📸 Ask before photographing people<br>🙂 Be polite and respectful, and enjoy the hospitality!";
+            }
+            
+            else if (message.includes("currency") || message.includes("money")) {
+                return "The currency in India is the Indian Rupee (INR). You can exchange foreign currency at banks, authorized money changers, or ATMs. Credit/debit cards are widely accepted in urban areas.";
+            }
+
+            else if (message.includes("safety") || message.includes("safe")) {
+                return "India is generally safe for tourists, but like any country, it's wise to be aware of your surroundings. Keep valuables secure, avoid isolated areas at night, and be cautious of scams. It's always good to have travel insurance.";
+            }
+            
+            else if (message.includes("visa")) {
+                return "Most foreign nationals require a visa to enter India. You can apply for an e-Visa online, which is usually the easiest option for tourism. Check the official Indian government website for the latest requirements for your nationality.";
+            }
+
+            else if (message.includes("language") || message.includes("speak")) {
+                return "Hindi is the official language, and English is widely spoken in tourist areas and cities. There are also many regional languages, with 22 official languages in total. Learning a few basic phrases in Hindi can be very helpful!";
+            }
+            
+            else {
+                return "I'm not sure how to answer that, but I can help you with: <br>Places to visit, Travel tips, Local cuisine, Transportation, Shopping tips, Cultural etiquette, Weather, Currency, Safety, or Visa information.";
+            }
+        }
+    </script>
+</body>
+</html>
